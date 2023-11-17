@@ -1,36 +1,47 @@
 import pygame as pg
 from CONSTANTS import *
+from global_vars import *
 
 class EventHandler():
     def __init__(self, display):
         self.display = display
+        self.events = None
+        self.keys = None
 
-    def listen(self, events, keys):
-        for event in events:
-            if event.type == pg.QUIT or keys[pg.K_ESCAPE]:
+    def listen(self):
+        for event in self.events:
+            if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 pg.quit()
 
-def player_control_process(list_players, list_bullets, keys):
-    for player in list_players:
-        player.move(keys)
-        player.update_location()
-        if keys[player.controls["SHOOT"]]:
-            list_bullets.append(player.shoot())
+    def player_control_process(self):
+        for player in list_players:
+            if not player.dummy:
+                player.move(self.keys)
+                player.update_location()
+                if self.keys[player.controls["SHOOT"]]:
+                    list_bullets.append(player.shoot())
 
-def update_bullets(list_bullets):
-    for bullet in list_bullets:
-        bullet.update_location()
-        #Delete bullet if out of bounds or lifespan is 0
-        if bullet.coord["x"] > SCREEN_WIDTH + 10 or bullet.coord["x"] < -10 or bullet.coord["y"] > SCREEN_HEIGHT + 10 or bullet.coord["y"] < -10 or bullet.lifespan <= 0:
-            if bullet in list_bullets:
-                list_bullets.remove(bullet)
+    def update_bullets(self):
+        for bullet in list_bullets:
+            bullet.update_location()
+            #Delete bullet if out of bounds or lifespan is 0
+            if bullet.x > SCREEN_WIDTH + 10 or bullet.x < -10 or bullet.y > SCREEN_HEIGHT + 10 or bullet.y < -10 or bullet.lifespan <= 0:
+                if bullet in list_bullets:
+                    list_bullets.remove(bullet)
 
-def update_screen(mainDisplay, list_players, list_bullets):
-    for player in list_players:
-        # Rotate player
-        player.image = pg.transform.rotate(player.texture, -player.angle)
-        player.rect = player.image.get_rect()
-        player.rect.center = (player.coord["x"], player.coord["y"])
-        mainDisplay.blit(player.image, player.rect)
-    for bullet in list_bullets:
-        mainDisplay.blit(bullet.image, bullet.rect)
+    def update_screen(self):
+        for player in list_players:
+            # Rotate image but not rect
+            rotated_texture = pg.transform.rotate(player.texture, -player.angle)
+            rotated_rect = rotated_texture.get_rect(center=player.rect.center)
+            mainDisplay.blit(rotated_texture, rotated_rect)
+        for bullet in list_bullets:
+            mainDisplay.blit(bullet.image, bullet.rect)
+
+    def debug(self):
+        font = pg.font.SysFont('Arial', 20)
+        mainDisplay.blit(font.render("FPS: " + str(int(clock.get_fps())), False, pg.color.Color('white')), (0,0))
+        mainDisplay.blit(font.render("Bullets: " + str(len(list_bullets)), False, pg.color.Color('white')), (0,20))
+        mainDisplay.blit(font.render("Players: " + str(len(list_players)), False, pg.color.Color('white')), (0,40))
+        for player in list_players:
+            mainDisplay.blit(player.image, player.rect)

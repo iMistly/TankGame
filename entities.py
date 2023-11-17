@@ -5,7 +5,7 @@ import math
 import random
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, image: pg.image = "random_color", coord: tuple = (0,0), controls: list = [None, None, None, None, None]):
+    def __init__(self, image: pg.image = "no_image", coord: tuple = (0,0), controls: list = "Dummy"):
         """
         image: Pick color according to pygame's list of colors pg.color.THECOLORS
         coord: (x, y) tuple
@@ -13,34 +13,35 @@ class Player(pg.sprite.Sprite):
         """
         super().__init__()
         
-        if image == "random_color":
-            self.texture = pg.Surface(PLAYER_SIZE)
-            self.image = self.texture
-            self.image.fill(pg.color.Color(random.choice(list(pg.color.THECOLORS.keys()))))
-        else:
-            self.texture = pg.image.load(image)
-            self.texture = pg.transform.scale(self.texture, PLAYER_SIZE)
-            self.image = self.texture
+        self.texture = pg.image.load(image) if image != "no_image" else pg.image.load("assets/none.png")
+        self.texture = pg.transform.scale(self.texture, (PLAYER_WIDTH*1.1, PLAYER_WIDTH*1.1))
+        self.image = pg.surface.Surface(PLAYER_SIZE)
+        self.image.fill(pg.color.Color(random.choice(list(pg.color.THECOLORS.keys()))))
         self.rect = self.image.get_rect()
-        self.coord = {"x": coord[0], "y": coord[1]}
-        self.rect.center = (self.coord["x"], self.coord["y"])
+        self.x = coord[0]
+        self.y = coord[1]
+        self.rect.center = (self.x, self.y)
         self.angle = 0
-        
+        self.dummy = False
         #Controls
-        self.controls = {"FORWARD": controls[0],
-                         "LEFT": controls[1], 
-                         "BACK": controls[2], 
-                         "RIGHT": controls[3],
-                         "SHOOT": controls[4]
-                         }
+        if len(controls) != 5 or controls == "Dummy":
+            self.dummy = True
+            self.controls = None
+        else:
+            self.controls = {"FORWARD": controls[0],
+                             "LEFT": controls[1], 
+                             "BACK": controls[2], 
+                             "RIGHT": controls[3],
+                             "SHOOT": controls[4]
+                             }
     
     def move(self, keys):
         if keys[self.controls["FORWARD"]]:
-            self.coord["x"] += math.cos(math.radians(self.angle))
-            self.coord["y"] += math.sin(math.radians(self.angle))
+            self.x += math.cos(math.radians(self.angle)) * PLAYER_SPEED
+            self.y += math.sin(math.radians(self.angle)) * PLAYER_SPEED
         if keys[self.controls["BACK"]]:
-            self.coord["x"] -= math.cos(math.radians(self.angle))
-            self.coord["y"] -= math.sin(math.radians(self.angle))
+            self.x -= math.cos(math.radians(self.angle))
+            self.y -= math.sin(math.radians(self.angle))
         if keys[self.controls["LEFT"]]:
             self.angle -= PLAYER_TURNING_SPEED
         if keys[self.controls["RIGHT"]]:
@@ -53,7 +54,7 @@ class Player(pg.sprite.Sprite):
                           angle_rad)
     
     def update_location(self):
-        self.rect.center = (self.coord["x"], self.coord["y"])
+        self.rect.center = (self.x, self.y)
         self.angle %= 360
         
 class Bullet(pg.sprite.Sprite):
@@ -62,22 +63,23 @@ class Bullet(pg.sprite.Sprite):
         self.image = pg.Surface(BULLET_SIZE)
         self.image.fill(pg.color.Color('white'))
         self.rect = self.image.get_rect()
-        self.coord = {"x": coord[0], "y": coord[1]}
-        self.rect.center = (self.coord["x"], self.coord["y"])
+        self.x = coord[0]
+        self.y = coord[1]
+        self.rect.center = (self.x, self.y)
         self.angle = angle
         self.lifespan = BULLET_LIFESPAN
         self.speed = BULLET_SPEED
 
     def update_location(self):
-        self.coord["x"] += math.cos(self.angle)
-        self.coord["y"] += math.sin(self.angle)
-        self.rect.center = (self.coord["x"], self.coord["y"])
+        self.x += math.cos(self.angle) * BULLET_SPEED
+        self.y += math.sin(self.angle) * BULLET_SPEED
+        self.rect.center = (self.x, self.y)
         self.lifespan -= 1
         #Fade out
         if self.lifespan < 20:
             self.image.set_alpha(self.lifespan * 10)
         #Bounce
-        if self.coord["y"] > SCREEN_HEIGHT - self.rect.height or self.coord["y"] < 0:
+        if self.y > SCREEN_HEIGHT - self.rect.height or self.y < 0:
             self.angle = -self.angle
-        if self.coord["x"] > SCREEN_WIDTH - self.rect.width or self.coord["x"] < 0:
+        if self.x > SCREEN_WIDTH - self.rect.width or self.x < 0:
             self.angle = math.pi - self.angle
