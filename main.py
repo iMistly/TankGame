@@ -1,7 +1,6 @@
 import pygame as pg
 from CONSTANTS import *
 import entities as ent
-from physics import *
 from event_handler import *
 
 #Pygame initialization
@@ -13,9 +12,9 @@ eventHandler = EventHandler(mainDisplay)
 list_players = []
 list_bullets = []
 
-list_players.append(ent.Player(coord = (50,50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
-list_players.append(ent.Player(coord = (SCREEN_WIDTH - 50, SCREEN_HEIGHT - 50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
-list_players[1].angle = 180
+list_players.append(ent.Player(coord = (50, 50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
+list_players.append(ent.Player(image = "assets/tank.png", coord = (50,50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
+
 gameActive = True
 if __name__ == "__main__":
     while gameActive:

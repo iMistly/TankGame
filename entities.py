@@ -5,19 +5,22 @@ import math
 import random
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, color = "random", coord: tuple = (0,0), controls: list = [None, None, None, None, None]):
-        '''
-        color: Pick color according to pygame's list of colors pg.color.THECOLORS
+    def __init__(self, image: pg.image = "random_color", coord: tuple = (0,0), controls: list = [None, None, None, None, None]):
+        """
+        image: Pick color according to pygame's list of colors pg.color.THECOLORS
         coord: (x, y) tuple
-        controls: [up, left, down, right]
-        '''
+        controls: [up, left, down, right] default is dummy
+        """
         super().__init__()
         
-        if color == "random":
-            color = random.choice(list(pg.color.THECOLORS.values()))
-            
-        self.image = pg.Surface(PLAYER_SIZE)
-        self.image.fill(pg.color.Color(color))
+        if image == "random_color":
+            self.texture = pg.Surface(PLAYER_SIZE)
+            self.image = self.texture
+            self.image.fill(pg.color.Color(random.choice(list(pg.color.THECOLORS.keys()))))
+        else:
+            self.texture = pg.image.load(image)
+            self.texture = pg.transform.scale(self.texture, PLAYER_SIZE)
+            self.image = self.texture
         self.rect = self.image.get_rect()
         self.coord = {"x": coord[0], "y": coord[1]}
         self.rect.center = (self.coord["x"], self.coord["y"])
