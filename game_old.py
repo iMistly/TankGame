@@ -26,7 +26,7 @@ def playerShoot(plyr, dir) -> Bullet:
     return Bullet(plyr.rect.centerx + math.sqrt(0.5)*plyr.rect.width*math.cos(dir), #Edge of player
                   plyr.rect.centery + math.sqrt(0.5)*plyr.rect.height*math.sin(dir), #Edge of player
                   dir)
-            
+
 
 def burst(plyr):
     burstList = []
@@ -41,7 +41,7 @@ pg.init()
 width, height = 480, 480
 screen = pg.display.set_mode((width, height))
 
-hit_sound = pg.mixer.Sound('Bonk.wav')
+hit_sound = pg.mixer.Sound('assets/Bonk.wav')
 hit_sound.set_volume(0.1)
 
 player = Player(100, 100, 'red')
