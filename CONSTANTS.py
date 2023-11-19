@@ -1,3 +1,5 @@
+import pygame as pg
+
 #Screen Settings
 SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 480
@@ -8,6 +10,11 @@ PLAYER_WIDTH = 20
 PLAYER_SIZE = (PLAYER_WIDTH, PLAYER_WIDTH)
 PLAYER_SPEED = 1
 PLAYER_TURNING_SPEED = 360/60
+DEFAULT_MAGAZINE_SIZE = 3
+
+#Control Presets [FORWARD, BACK, LEFT, RIGHT, SHOOT]
+CONTROL_PRESET = {"WASD": [pg.K_w, pg.K_s, pg.K_a, pg.K_d, pg.K_q],
+                  "ARROWS": [pg.K_UP, pg.K_DOWN, pg.K_LEFT, pg.K_RIGHT, pg.K_RCTRL]}
 
 #Bullet Settings
 BULLET_SIZE = (5, 5)

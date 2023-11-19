@@ -6,11 +6,11 @@ from event_handler import EventHandler
 
 #Pygame initialization
 pg.init()
-handler = EventHandler(mainDisplay)
+handler = EventHandler()
 
-list_players.append(ent.Player(coord = (SCREEN_WIDTH-50, SCREEN_HEIGHT-50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
-list_players.append(ent.Player(image = "assets/tank.png", coord = (50,50), controls=[pg.K_w, pg.K_a, pg.K_s, pg.K_d, pg.K_q]))
-list_players[0].angle = 180
+
+list_players.append(ent.Player(1, image = "assets/tank.png", coord = (50,50), controls=CONTROL_PRESET["WASD"]))
+list_players.append(ent.Player(2, image = "assets/tank.png", coord = (SCREEN_WIDTH-50, 50), angleDeg=180, controls=CONTROL_PRESET["ARROWS"]))
 
 if __name__ == "__main__":
     while gameActive:

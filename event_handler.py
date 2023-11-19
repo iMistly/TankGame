@@ -3,8 +3,8 @@ from CONSTANTS import *
 from global_vars import *
 
 class EventHandler():
-    def __init__(self, display):
-        self.display = display
+    def __init__(self):
+        self.display = mainDisplay
         self.events = None
         self.keys = None
 
@@ -12,14 +12,17 @@ class EventHandler():
         for event in self.events:
             if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 pg.quit()
+            if event.type == pg.KEYDOWN:
+                for player in list_players:
+                    if not player.dummy:
+                        if event.key == player.controls["SHOOT"] and player.magazine > 0:
+                            list_bullets.append(player.shoot())
 
     def player_control_process(self):
         for player in list_players:
             if not player.dummy:
                 player.move(self.keys)
                 player.update_location()
-                if self.keys[player.controls["SHOOT"]]:
-                    list_bullets.append(player.shoot())
 
     def update_bullets(self):
         for bullet in list_bullets:
@@ -27,7 +30,9 @@ class EventHandler():
             #Delete bullet if out of bounds or lifespan is 0
             if bullet.x > SCREEN_WIDTH + 10 or bullet.x < -10 or bullet.y > SCREEN_HEIGHT + 10 or bullet.y < -10 or bullet.lifespan <= 0:
                 if bullet in list_bullets:
+                    bullet.owner.magazine += 1
                     list_bullets.remove(bullet)
+
 
     def update_screen(self):
         for player in list_players:

@@ -5,7 +5,7 @@ import math
 import random
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, image: pg.image = "no_image", coord: tuple = (0,0), controls: list = "Dummy"):
+    def __init__(self, numPlayer, image: pg.image = "no_image", coord: tuple = (0,0), angleDeg: int = 0, controls: list = "Dummy"):
         """
         image: Pick color according to pygame's list of colors pg.color.THECOLORS
         coord: (x, y) tuple
@@ -13,6 +13,10 @@ class Player(pg.sprite.Sprite):
         """
         super().__init__()
         
+        self.numPlayer = numPlayer
+        self.magazine = DEFAULT_MAGAZINE_SIZE
+        self.dummy = False
+
         self.texture = pg.image.load(image) if image != "no_image" else pg.image.load("assets/none.png")
         self.texture = pg.transform.scale(self.texture, (PLAYER_WIDTH*1.1, PLAYER_WIDTH*1.1))
         self.image = pg.surface.Surface(PLAYER_SIZE)
@@ -21,16 +25,16 @@ class Player(pg.sprite.Sprite):
         self.x = coord[0]
         self.y = coord[1]
         self.rect.center = (self.x, self.y)
-        self.angle = 0
-        self.dummy = False
+        self.angle = angleDeg
+        
         #Controls
         if len(controls) != 5 or controls == "Dummy":
             self.dummy = True
             self.controls = None
         else:
             self.controls = {"FORWARD": controls[0],
-                             "LEFT": controls[1], 
-                             "BACK": controls[2], 
+                             "BACK": controls[1], 
+                             "LEFT": controls[2], 
                              "RIGHT": controls[3],
                              "SHOOT": controls[4]
                              }
@@ -49,16 +53,17 @@ class Player(pg.sprite.Sprite):
         
     def shoot(self):
         angle_rad = math.radians(self.angle)
+        self.magazine -= 1
         return ent.Bullet((self.rect.centerx + math.sqrt(0.5)*self.rect.width*math.cos(angle_rad), #Edge of player
                           self.rect.centery + math.sqrt(0.5)*self.rect.height*math.sin(angle_rad)), #Edge of player
-                          angle_rad)
+                          angle_rad, self)
     
     def update_location(self):
         self.rect.center = (self.x, self.y)
         self.angle %= 360
         
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, coord, angle):
+    def __init__(self, coord, angle, owner = None):
         super().__init__()
         self.image = pg.Surface(BULLET_SIZE)
         self.image.fill(pg.color.Color('white'))
@@ -69,12 +74,14 @@ class Bullet(pg.sprite.Sprite):
         self.angle = angle
         self.lifespan = BULLET_LIFESPAN
         self.speed = BULLET_SPEED
+        self.owner = owner
 
     def update_location(self):
-        self.x += math.cos(self.angle) * BULLET_SPEED
-        self.y += math.sin(self.angle) * BULLET_SPEED
+        self.x += math.cos(self.angle) * self.speed
+        self.y += math.sin(self.angle) * self.speed
         self.rect.center = (self.x, self.y)
         self.lifespan -= 1
+        self.speed *= 0.99
         #Fade out
         if self.lifespan < 20:
             self.image.set_alpha(self.lifespan * 10)
