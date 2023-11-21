@@ -4,14 +4,13 @@ import entities as ent
 import math
 import random
 
-class Player(pg.sprite.Sprite):
+class Player():
     def __init__(self, numPlayer, image: pg.image = "no_image", coord: tuple = (0,0), angleDeg: int = 0, controls: list = "Dummy"):
         """
         image: Pick color according to pygame's list of colors pg.color.THECOLORS
         coord: (x, y) tuple
         controls: [up, left, down, right] default is dummy
         """
-        super().__init__()
         
         self.numPlayer = numPlayer
         self.magazine = DEFAULT_MAGAZINE_SIZE
@@ -63,9 +62,8 @@ class Player(pg.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.angle %= 360
         
-class Bullet(pg.sprite.Sprite):
+class Bullet():
     def __init__(self, coord, angle, owner = None):
-        super().__init__()
         self.image = pg.Surface(BULLET_SIZE)
         self.image.fill(pg.color.Color('white'))
         self.rect = self.image.get_rect()
