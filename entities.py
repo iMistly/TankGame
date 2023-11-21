@@ -126,7 +126,7 @@ class Bullet():
         self.speed = BULLET_SPEED
         self.owner = owner
 
-    def update_location(self):
+    def update_location(self, test_rect):
         self.x += math.cos(self.angle) * self.speed
         self.y += math.sin(self.angle) * self.speed
         self.rect.center = (self.x, self.y)
@@ -136,10 +136,18 @@ class Bullet():
         if self.lifespan < 20:
             self.texture.set_alpha(self.lifespan * 10)
         #Bounce
-        if self.y > SCREEN_HEIGHT - self.rect.height or self.y < 0:
-            self.angle = -self.angle
-        if self.x > SCREEN_WIDTH - self.rect.width or self.x < 0:
-            self.angle = math.pi - self.angle
+        collidedObject = self.rect.collideobjects([test_rect])
+        if(collidedObject != None):
+            print(collidedObject.center, self.rect.center)
+            if self.rect.center[1] > collidedObject.top and self.rect.center[1] < collidedObject.bottom: # x-axis bounce
+                self.angle = math.pi - self.angle
+            if self.rect.center[0] > collidedObject.left and self.rect.center[0] > collidedObject.top: # y-axis bounce
+                # if self.rect.topright < collidedObject.center[0]
+                self.angle = -self.angle
+        # if self.y > SCREEN_HEIGHT - self.rect.height or self.y < 0:
+        #     self.angle = -self.angle
+        # if self.x > SCREEN_WIDTH - self.rect.width or self.x < 0:
+        #     self.angle = math.pi - self.angle
 
 class Laser():
     def __init__(self, coord, angleRad, owner = None):
