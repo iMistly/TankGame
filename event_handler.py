@@ -35,9 +35,6 @@ class EventHandler():
 
 
     def update_screen(self):
-        # debug
-        if DEBUG:
-            self.debug()
         for player in list_players:
             # Rotate image but not rect
             rotated_texture = pg.transform.rotate(player.texture, -player.angle)
@@ -45,6 +42,9 @@ class EventHandler():
             mainDisplay.blit(rotated_texture, rotated_rect)
         for bullet in list_bullets:
             mainDisplay.blit(bullet.image, bullet.rect)
+        # debug
+        if DEBUG:
+            self.debug()
 
     def debug(self):
         font = pg.font.SysFont('Arial', 20)

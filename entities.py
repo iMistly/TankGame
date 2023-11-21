@@ -20,7 +20,8 @@ class Player(pg.sprite.Sprite):
         self.texture = pg.image.load(image) if image != "no_image" else pg.image.load("assets/none.png")
         self.texture = pg.transform.scale(self.texture, (PLAYER_WIDTH*1.1, PLAYER_WIDTH*1.1))
         self.image = pg.surface.Surface(PLAYER_SIZE)
-        self.image.fill(pg.color.Color(random.choice(list(pg.color.THECOLORS.keys()))))
+        self.image.fill(pg.color.Color('purple'))
+        self.image.set_alpha(125)
         self.rect = self.image.get_rect()
         self.x = coord[0]
         self.y = coord[1]
