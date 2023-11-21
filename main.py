@@ -25,9 +25,6 @@ if __name__ == "__main__":
         handler.listen()
         handler.player_control_process()
         handler.update_bullets()
-        # debug
-        if DEBUG:
-            handler.debug()
 
         handler.update_screen()
         pg.display.update()

@@ -35,6 +35,9 @@ class EventHandler():
 
 
     def update_screen(self):
+        # debug
+        if DEBUG:
+            self.debug()
         for player in list_players:
             # Rotate image but not rect
             rotated_texture = pg.transform.rotate(player.texture, -player.angle)
