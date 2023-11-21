@@ -48,6 +48,7 @@ class Player():
 
         self.texture = texture if texture != None else pg.image.load("assets/none.png")
         self.smoke = Texture("assets/smoke.png", isAnimated = True, frames = 6, frameTime = 10)
+        # self.smoke.image = pg.transform.scale(self.smoke.image, PLAYER_SIZE)
         self.smoke.image.set_alpha(0)
         self.image = pg.surface.Surface(PLAYER_SIZE)
         self.image.fill(pg.color.Color('purple'))
@@ -107,16 +108,15 @@ class Player():
         if self.hitPoints > 0:
             self.hitPoints -= 1
             self.smoke.image.set_alpha(255//DEFAULT_HEALTH * (DEFAULT_HEALTH-self.hitPoints))
-        else:
+        if self.hitPoints <= 0:
             self.dummy = True
         
 class Bullet():
     def __init__(self, coord, angleRad, owner = None):
         self.texture = pg.image.load("assets/bullet.png")
-        self.texture = pg.transform.scale(self.texture, (BULLET_WIDTH+2, BULLET_WIDTH+2))
+        self.texture = pg.transform.scale(self.texture, (BULLET_WIDTH*1.4, BULLET_WIDTH*1.4))
         self.image = pg.Surface(BULLET_SIZE)
-        self.image.fill(pg.color.Color('pink'))
-        self.image.set_alpha(125)
+        self.image.fill(pg.color.Color('red'))
         self.rect = self.image.get_rect()
         self.x = coord[0]
         self.y = coord[1]
@@ -131,10 +131,10 @@ class Bullet():
         self.y += math.sin(self.angle) * self.speed
         self.rect.center = (self.x, self.y)
         self.lifespan -= 1
-        self.speed *= 0.99
+        self.speed *= 1 - BULLET_DECELERATION
         #Fade out
         if self.lifespan < 20:
-            self.image.set_alpha(self.lifespan * 10)
+            self.texture.set_alpha(self.lifespan * 10)
         #Bounce
         if self.y > SCREEN_HEIGHT - self.rect.height or self.y < 0:
             self.angle = -self.angle

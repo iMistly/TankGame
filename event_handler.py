@@ -47,18 +47,20 @@ class EventHandler():
         for player in list_players:
             # Rotate image but not rect
             current_frame = player.texture.call()
-            current_frame = pg.transform.scale(current_frame, (PLAYER_WIDTH*1.1, PLAYER_WIDTH*1.1))
+            current_frame = pg.transform.scale(current_frame, (PLAYER_WIDTH, PLAYER_WIDTH))
             rotated_texture = pg.transform.rotate(current_frame, -player.angle)
             rotated_rect = rotated_texture.get_rect(center=player.rect.center)
             mainDisplay.blit(rotated_texture, rotated_rect)
             # Blit smoke
-            player.smoke.update()
-            mainDisplay.blit(player.smoke.call(), (player.rect.x-10, player.rect.y-5))
+            if player.hitPoints < DEFAULT_HEALTH:
+                player.smoke.update()
+                sized_smoke = pg.transform.scale(player.smoke.call(), (PLAYER_WIDTH*1.5, PLAYER_WIDTH*1.5))
+                mainDisplay.blit(sized_smoke, (player.rect.center[0] - sized_smoke.get_width()/2, player.rect.center[1] - sized_smoke.get_height()/2))
             # Draw health bar
             pg.draw.rect(mainDisplay, pg.color.Color('red'), pg.Rect(player.rect.x, player.rect.y - 10, player.rect.width, 5))
             pg.draw.rect(mainDisplay, pg.color.Color('green'), pg.Rect(player.rect.x, player.rect.y - 10, player.rect.width * (player.hitPoints/DEFAULT_HEALTH), 5))
         for bullet in list_bullets:
-            mainDisplay.blit(bullet.texture, bullet.rect)
+            mainDisplay.blit(bullet.texture, (bullet.rect.center[0] - bullet.texture.get_width()/2, bullet.rect.center[1] - bullet.texture.get_height()/2))
         # debug
         if DEBUG:
             self.debug()
